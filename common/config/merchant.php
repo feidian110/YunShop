@@ -11,6 +11,12 @@ return [
         ],
         // 子模块配置
         'modules' => [
+            'shop' => [
+                'class' => 'addons\YunShop\merchant\modules\shop\Module',
+            ],
+            'product' => [
+                'class' => 'addons\YunShop\merchant\modules\product\Module',
+            ],
         ],
     ],
 

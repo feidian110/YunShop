@@ -18,9 +18,13 @@ class AppAsset extends AssetBundle
     public $sourcePath = '@addons/YunShop/html5/resources/';
 
     public $css = [
+        'shop/css/login.css'
     ];
 
     public $js = [
+        'shop/js/jquery.min.js',
+        'shop/js/login.js',
+        'shop/js/register.js'
     ];
 
     public $depends = [

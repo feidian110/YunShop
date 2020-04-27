@@ -11,6 +11,12 @@ return [
         ],
         // 子模块配置
         'modules' => [
+            'shop' => [
+                'class' => 'addons\YunShop\html5\modules\shop\Module',
+            ],
+            'member' => [
+                'class' => 'addons\YunShop\html5\modules\member\Module',
+            ],
         ],
     ],
 
