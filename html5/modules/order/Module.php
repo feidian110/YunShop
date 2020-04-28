@@ -1,16 +1,16 @@
 <?php
 
-namespace addons\YunShop\html5\modules\member;
+namespace addons\YunShop\html5\modules\order;
 
 /**
- * member module definition class
+ * order module definition class
  */
 class Module extends \yii\base\Module
 {
     /**
      * {@inheritdoc}
      */
-    public $controllerNamespace = 'addons\YunShop\html5\modules\member\controllers';
+    public $controllerNamespace = 'addons\YunShop\html5\modules\order\controllers';
 
     /**
      * {@inheritdoc}

@@ -17,6 +17,9 @@ return [
             'member' => [
                 'class' => 'addons\YunShop\html5\modules\member\Module',
             ],
+            'order' => [
+                'class' => 'addons\YunShop\html5\modules\order\Module',
+            ],
         ],
     ],
 
