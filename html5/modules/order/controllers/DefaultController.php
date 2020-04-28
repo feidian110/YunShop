@@ -1,11 +1,11 @@
 <?php
 
-namespace addons\YunShop\html5\modules\member\controllers;
+namespace addons\YunShop\html5\modules\order\controllers;
 
 use yii\web\Controller;
 
 /**
- * Default controller for the `member` module
+ * Default controller for the `order` module
  */
 class DefaultController extends Controller
 {
