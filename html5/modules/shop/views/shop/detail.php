@@ -59,14 +59,12 @@ use common\helpers\ImageHelper;
                                             <button class="minus">
                                                 <strong></strong>
                                             </button>
-                                            <i>0</i>
+                                            <i data-id="<?=$_item['id'];?>">0</i>
                                             <button class="add">
                                                 <strong></strong>
                                             </button>
 
-                                            <i class="price"><?= $_item['price'];?></i>
-                                            <input type="hidden" name="product[][id]" value="<?=$_item['id'];?>">
-                                            <input type="hidden" name="product[][name]" value="<?=$_item['name'];?>">
+                                            <i class="price" data-id="<?=$_item['name'];?>"><?= $_item['price'];?></i>
                                         </div>
                                         </p>
                                     </div>
@@ -85,23 +83,15 @@ use common\helpers\ImageHelper;
 </div>
 
 <div class="mask"></div>
-<div class="popup">
-    <div class="uptitle">
-        <span>已选菜品</span>
-        <div class="tb">清空</div>
-    </div>
-    <div class="uplist" >
-        <ul class="orderdetail" id="orderdetail">
 
-        </ul>
-    </div>
-</div>
 
 <div class="shop" id="cartN">
+    <a href="<?= \common\helpers\Url::to(['/cart/index']);?>">
     <div class="shopico">
         <i></i>
         <div class="numspan"><span id="totalcountshow">0</span></div>
     </div>
+    </a>
     <div class="shopprice" >￥<span id="totalpriceshow">0.00</span>元</div>
     <div class="shopbut">提交订单</div>
 </div>
@@ -109,22 +99,39 @@ use common\helpers\ImageHelper;
 <?php
 $js = <<<JS
     //加的效果  
-	$(".add").click(function () {  
+	$(".add").click(function () {
 		$(this).prevAll().css("display", "inline-block");  
+		var url = '/html5/yun-shop/cart/create';
 		var n = $(this).prev().text();  
 		var num = parseInt(n) + 1;  
 		if (num == 0) { return; }  
 		$(this).prev().text(num);  
-		var id = $("input[name='product[]").val(); 
-		var name = $("input[name='name']").val(); 
-		alert(id)
+		var id = $(this).prev().attr('data-id');
+		var name = $(this).next().attr('data-id');
 		var danjia = $(this).next().text();//获取单价  
 		var subtotal = num * danjia;
-		var a = $("#totalpriceshow").html();//获取当前所选总价  
-		$("#totalpriceshow").html((a * 1 + danjia * 1).toFixed(2));//计算当前所选总价  
-		var nm = $("#totalcountshow").html();//获取数量  
-		$("#totalcountshow").html(nm*1+1);  
-		cartProduct(id,name,danjia,num,subtotal)
+		
+		var data = {'id':id,'name':name,'num':num,'price':danjia};
+		
+		
+		$.post(url,data,function(result){
+		    if( result.code == 402 ){
+		        layer.confirm(result.message, {
+		            btn: ['确定','取消'] 
+		            }, function(){
+		            window.location.href = '/html5/yun-user/public/login'
+		            }, function(){
+		            
+            });
+		    }
+		    var a = $("#totalpriceshow").html();//获取当前所选总价  
+		    $("#totalpriceshow").html((a * 1 + danjia * 1).toFixed(2));//计算当前所选总价  
+		    var nm = $("#totalcountshow").html();//获取数量  
+		    $("#totalcountshow").html(nm*1+1); 
+		    setCartProduct(result.data)
+		    },"JSON");
+		
+		
 		jss();//<span style='font-family: Arial, Helvetica, sans-serif;'></span>   改变按钮样式
 	});  
 	//减的效果  
@@ -148,11 +155,36 @@ $js = <<<JS
 			 return  
 		}  
 	});
-	function cartProduct(id,name,price,num,subtotal) {
+	function setCartProduct(data) {
+	    product_html = "";
+	     $(data).each(function (i) {
+                product_html += '<li>' +
+                    '<div class="uppic"><img src="'+this.product_img+'"></div>'+
+                	'<div class="listtitle"><h1>'+this.product_name+'</h1><h2>￥'+this.price+'</h2></div>'+
+                    '<div class="listright"><span class="addnum"></span><p>'+this.number+'</p><span class="lessnum"></span></div>'+
+                    '</li>';
+               
+            });
+	     $('#cart_product').html(product_html);
+	}
+	function getCartProduct() {
+	    var str=localStorage.getItem('shop_cart_product');
+	    if(!str) return null;
+	    str=JSON.parse(str);
+	    product_html = "";
+	    for (var i in str) {
+	        product_html += '<li><div class="uppic">' +
+            	'<img src="images/p1.jpg"></div><div class="listtitle">'+
+                	'<h1>'+str[i].name+'</h1>'+
+                    '<h2>￥'+str[i].price+'</h2>'+
+                '</div><div class="listright">'+
+                	'<span class="addnum"></span>'+
+                    '<p>'+str[i].num+'</p>'+
+                    '<span class="lessnum"></span></div>'+
+                    '</li>'
+	    }
 	    
-	    $('.orderdetail').append('<li><div class="uppic"><img src="images/p1.jpg"></div><div class="listtitle"><h1>'+name+'</h1><h2>￥'+price+'</h2></div> <div class="btn"><button class="minus" style="display: inline-block;"><strong></strong></button><i style="display: inline-block;">'+num+'</i><button class="add"><strong></strong></button><i class="price">'+price+'</i><input type="hidden" name="id" value="'+id+'"><input type="hidden" name="name" value="'+name+'"></div></li>');
-	    
-	   
+	    $("#cart_product").html(product_html);
 	}
 	function jss() {  
 		var m = $("#totalcountshow").html();  
@@ -190,15 +222,8 @@ $js = <<<JS
             var i = $(this).index('.left ul li');
             $('body, html').animate({scrollTop:$('.right ul li').eq(i).offset().top-40},500);
         });
-        //购物车点击
-        $('.shop').click(function(){
-            $('.mask').show();
-            $('.popup').css("bottom","50px");
-        });
-        $('.mask').click(function(){
-            $('.mask').hide();
-            $('.popup').css("bottom","-300px");
-        });
+        
+        
     });
 JS;
 $this->registerJs($js);

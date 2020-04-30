@@ -25,9 +25,11 @@ class ShopController extends BaseController
             ->where( ['merchant_id'=>$model['merchant_id'],'store_id'=>$model['store_id']] )
             ->andWhere(['=','status',AuditStateEnum::ENABLED])
             ->all();
+
         return $this->render( $this->action->id,[
             'model' =>$model,
-            'cate' => $cate
+            'cate' => $cate,
+            'store_id' =>$id
         ] );
     }
 

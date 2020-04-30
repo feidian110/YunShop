@@ -19,12 +19,16 @@ class AppAsset extends AssetBundle
 
     public $css = [
         'shop/css/hui.css',
+        'shop/css/base.css',
+        'shop/css/module.css',
+        'shop/css/style.css',
         'shop/css/login.css',
 
     ];
 
     public $js = [
         'shop/js/hui.js',
+        'shop/js/shopping.js',
         'shop/js/common.js',
     ];
 

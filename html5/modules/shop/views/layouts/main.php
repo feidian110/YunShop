@@ -1,3 +1,8 @@
+<?php
+use addons\YunShop\html5\assets\CartAsset;
+CartAsset::register($this);
+
+?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
@@ -43,7 +48,7 @@
 <body>
 <?php $this->beginBody() ?>
 <?= $content;?>
-<script src="js/jquery-1.10.2.min.js"></script>
+
 <?php $this->endBody() ?>
 </body>
 </html>
