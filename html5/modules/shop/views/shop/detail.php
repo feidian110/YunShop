@@ -1,5 +1,7 @@
 <?php
+use common\helpers\Html;
 use common\helpers\ImageHelper;
+use yii\widgets\ActiveForm;
 ?>
     <style>
        .btn{background-color:transparent;position:absolute;right:0px;top:45%;cursor:pointer;padding:20px 20px;height:38px;float: left}
@@ -49,17 +51,17 @@ use common\helpers\ImageHelper;
                             <div>
                                 <div class="menu-txt item">
                                     <div class="item-left">
-                                        <div class="item-img"><img src="<?= ImageHelper::default($_item['picture']);?>" style="position: relative; height: 75px"></div>
+                                        <div class="item-img" style="width: 75px"><img src="<?= ImageHelper::default($_item['picture']);?>" style="position: relative; height: 75px;width: 75px"></div>
                                     </div>
                                     <div class="item-right">
                                         <div class="title"><?= $_item['name'];?></div>
                                         <p class="list2">
                                             <b style="color: red; font-size: 12px">￥<?= $_item['price'];?>/<?=$_item['unit'];?></b>
                                         <div class="btn">
-                                            <button class="minus">
+                                            <button class="minus" <?php if( Yii::$app->yunShopService->cartShop->findProductCountByCart($store_id,$_item['id']) > 0 ){ echo 'style="display: inline-block;"';}else{}?>>
                                                 <strong></strong>
                                             </button>
-                                            <i data-id="<?=$_item['id'];?>">0</i>
+                                            <i data-id="<?=$_item['id'];?>" <?php if( Yii::$app->yunShopService->cartShop->findProductCountByCart($store_id,$_item['id']) > 0 ){ echo 'style="display: inline-block;"';}else{}?>><?= Yii::$app->yunShopService->cartShop->findProductCountByCart($store_id,$_item['id']) ?? 0;?></i>
                                             <button class="add">
                                                 <strong></strong>
                                             </button>
@@ -81,20 +83,57 @@ use common\helpers\ImageHelper;
         </div>
     </div>
 </div>
+    <div class="mask"></div>
 
-<div class="mask"></div>
+    <?php $form = ActiveForm::begin([
 
+    'action' => '/html5/yun-shop/order/order/create',
 
-<div class="shop" id="cartN">
-    <a href="<?= \common\helpers\Url::to(['/cart/index']);?>">
-    <div class="shopico">
-        <i></i>
-        <div class="numspan"><span id="totalcountshow">0</span></div>
+])?>
+    <div class="popup">
+        <div class="uptitle">
+            <span>已选菜品</span>
+            <div class="tb delete">清空</div>
+        </div>
+        <div class="uplist">
+            <input name="store_id" type="hidden" value="<?=$store_id;?>">
+            <ul id="cart_product">
+                <?php foreach ( $product as $p ):?>
+                <li>
+                    <div class="uppic">
+                        <img src="<?= ImageHelper::default($p['product_img']);?>" height="60px">
+                    </div>
+                    <div class="listtitle">
+                        <input type="hidden" name="OrderDetail[<?=$p['product_id'];?>][id]" value="<?=$p['product_id'];?>">
+                        <input type="hidden" name="OrderDetail[<?=$p['product_id'];?>][num]" value="<?=$p['number'];?>">
+                        <input type="hidden" name="OrderDetail[<?=$p['product_id'];?>][price]" value="<?=$p['price'];?>">
+                        <h1><?= $p['product_name'];?></h1>
+                        <h2>￥<?=$p['price'];?></h2>
+                    </div>
+                    <div class="listright">
+                        <span class="addnum"></span>
+                        <p ><?=$p['number'];?></p>
+                        <span class="lessnum"></span>
+                    </div>
+                </li>
+                <?php endforeach;?>
+
+            </ul>
+
+        </div>
     </div>
-    </a>
-    <div class="shopprice" >￥<span id="totalpriceshow">0.00</span>元</div>
-    <div class="shopbut">提交订单</div>
+    <div>
+    <div class="shop" id="cartN">
+        <div class="shop shopico">
+            <i></i>
+            <div class="numspan"><span id="totalcountshow"><?= Yii::$app->yunShopService->cartShop->getCartItemCount($store_id) ?? 0;?></span></div>
+        </div>
+        <div class="shopprice" >￥<span id="totalpriceshow"><?= Yii::$app->yunShopService->cartShop->getCartItemTotal($store_id) ?? '0.00';?></span>元</div>
+    </div>
+
+    <div><button class="shop_submit" type="submit">去结算</button></div>
 </div>
+    <?php ActiveForm::end()?>
 
 <?php
 $js = <<<JS
@@ -111,7 +150,7 @@ $js = <<<JS
 		var danjia = $(this).next().text();//获取单价  
 		var subtotal = num * danjia;
 		
-		var data = {'id':id,'name':name,'num':num,'price':danjia};
+		var data = {'id':id,'name':name,'num':num,'price':danjia,'store_id':$store_id};
 		
 		
 		$.post(url,data,function(result){
@@ -161,6 +200,7 @@ $js = <<<JS
                 product_html += '<li>' +
                     '<div class="uppic"><img src="'+this.product_img+'"></div>'+
                 	'<div class="listtitle"><h1>'+this.product_name+'</h1><h2>￥'+this.price+'</h2></div>'+
+                	'<input type="hidden" name="OrderDetail['+this.product_id+'][id]" value="'+this.product_id+'"><input type="hidden" name="OrderDetail['+this.product_id+'][number]" value="'+this.number+'"><input type="hidden" name="OrderDetail['+this.product_id+'][price]" value="'+this.price+'">'+
                     '<div class="listright"><span class="addnum"></span><p>'+this.number+'</p><span class="lessnum"></span></div>'+
                     '</li>';
                
@@ -195,6 +235,7 @@ $js = <<<JS
 		}  
 	};
 	$(function(){
+	    
         $('.content').css('height',$('.right').height());
         $('.left ul li').eq(0).addClass('active');
         $(window).scroll(function(){
@@ -223,8 +264,32 @@ $js = <<<JS
             $('body, html').animate({scrollTop:$('.right ul li').eq(i).offset().top-40},500);
         });
         
-        
+        //购物车点击
+	$('.shop').click(function(){
+      $('.mask').show();
+	  $('.popup').css("bottom","50px");
     });
+	$('.mask').click(function(){
+      $('.mask').hide();
+	  $('.popup').css("bottom","-300px");
+    });
+    });
+	$('.delete').click(function() {
+	    var url = '/html5/yun-shop/cart/delete';
+	    var data = {'store_id': $store_id};
+	    $.post(url,data,function(result) {
+	        if( result.code != 200 ){
+	            layer.msg(result.message);
+	            return false; 
+	        }
+	        
+	        layer.msg(result.message);
+	        window.location = window.location;
+	        return false;
+	    })
+	    
+	});
+	
 JS;
 $this->registerJs($js);
 ?>

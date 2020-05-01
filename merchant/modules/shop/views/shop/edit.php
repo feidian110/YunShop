@@ -1,5 +1,6 @@
 <?php
 
+use addons\YunStore\common\enums\ShippingTypeEnum;
 use addons\YunStore\common\enums\StateEnum;
 use common\enums\WhetherEnum;
 use yii\widgets\ActiveForm;
@@ -35,7 +36,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                     <?= $form->field($model, 'notice')->textarea() ?>
                     <?= $form->field($model, 'emergency_shutdown')->dropDownList(WhetherEnum::getMap())->hint('注：状态是“关闭”时店铺是正常状态，“开启”是店铺已关闭。【紧急关店用于临时有事需要暂停营业的情况下，开启后，用户前台不可下单，请谨慎使用】');?>
                     <?= $form->field($model, 'closing_reason')->textarea();?>
-                    <?= $form->field($model, 'delivery_method')->dropDownList([]);?>
+                    <?= $form->field($model, 'delivery_method')->dropDownList(ShippingTypeEnum::getMap());?>
                     <?= $form->field($model, 'level_cate')->radioList(StateEnum::getMap())->hint('开启多级分类后，快店商品将分三级分类展示，便于您更好的管理多类型商品，注意：开启多级分类后，前台只展示侧重文字模板，侧重图片模板将关闭。');?>
                     <?= $form->field($model, 'package_alias')->textInput();?>
                     <?= $form->field($model, 'freight_alias')->textInput() ?>

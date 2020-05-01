@@ -1,9 +1,11 @@
 <?php
 namespace addons\YunShop\html5\modules\shop\controllers;
 
+use addons\YunShop\common\models\CartItem;
 use addons\YunShop\common\models\Shop;
 use addons\YunStore\common\enums\AuditStateEnum;
 use addons\YunStore\common\models\product\ProductCate;
+use common\enums\StatusEnum;
 use common\enums\WhetherEnum;
 use common\helpers\ResultHelper;
 use Yii;
@@ -25,11 +27,14 @@ class ShopController extends BaseController
             ->where( ['merchant_id'=>$model['merchant_id'],'store_id'=>$model['store_id']] )
             ->andWhere(['=','status',AuditStateEnum::ENABLED])
             ->all();
+        $product = CartItem::findAll(['store_id'=>$id,'member_id'=>Yii::$app->user->getId(),'status'=>StatusEnum::ENABLED]);
+
 
         return $this->render( $this->action->id,[
             'model' =>$model,
             'cate' => $cate,
-            'store_id' =>$id
+            'store_id' =>$id,
+            'product' => $product
         ] );
     }
 

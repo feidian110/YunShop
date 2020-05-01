@@ -27,6 +27,7 @@ class CartController extends BaseController
                 return ResultHelper::json('402','还未登录，请登录后在操作！');
             }
             $product_id = (int)Yii::$app->request->post('id',0);
+            $store_id = (int)Yii::$app->request->post('store_id',0);
             $product = Product::findOne(['id'=>$product_id]);
             if( $product == null ){
                 return ResultHelper::json('404','商品【'.(string)Yii::$app->request->post('name').'】已下架或已停售，请重新选择');
@@ -38,7 +39,7 @@ class CartController extends BaseController
                 $model->product_name = $product['name'];
                 $model->product_img = $product['picture'];
                 $model->merchant_id = $product['merchant_id'];
-                $model->store_id = $product['store_id'];
+                $model->store_id = $store_id;
                 $model->member_id = Yii::$app->user->getId();
             }
 
@@ -48,9 +49,29 @@ class CartController extends BaseController
             if( !$model->save(0) ){
                 return ResultHelper::json('402',$model->getErrors());
             }
-            return ResultHelper::json('200','添加成功！',CartItem::findAll(['member_id'=>Yii::$app->user->getId(),'store_id'=>$product['store_id']]));
+
+            return ResultHelper::json('200','添加成功！',CartItem::findAll(['member_id'=>Yii::$app->user->getId(),'store_id'=>$store_id]));
         }
 
+    }
+
+    public function actionDelete()
+    {
+        if(Yii::$app->request->isPost){
+            if( Yii::$app->user->isGuest ){
+                return ResultHelper::json('402','您还未登录，请登录后在操作！');
+            }
+            $store_id = (int)Yii::$app->request->post('store_id',0);
+
+            $result = CartItem::deleteAll(['store_id'=> $store_id,'member_id' =>Yii::$app->user->getId() ]);
+
+
+            if( $result ){
+                return ResultHelper::json( 200,'购物车已清空');
+            }
+            return ResultHelper::json( 402,'清空失败' );
+        }
+        return ResultHelper::json('404','页面未找到！');
     }
 
 }
