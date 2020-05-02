@@ -86,8 +86,7 @@ use yii\widgets\ActiveForm;
     <div class="mask"></div>
 
     <?php $form = ActiveForm::begin([
-
-    'action' => '/html5/yun-shop/order/order/create',
+    'action' => '/html5/yun-shop/order/order/confirm',
 
 ])?>
     <div class="popup">
@@ -200,7 +199,7 @@ $js = <<<JS
                 product_html += '<li>' +
                     '<div class="uppic"><img src="'+this.product_img+'"></div>'+
                 	'<div class="listtitle"><h1>'+this.product_name+'</h1><h2>￥'+this.price+'</h2></div>'+
-                	'<input type="hidden" name="OrderDetail['+this.product_id+'][id]" value="'+this.product_id+'"><input type="hidden" name="OrderDetail['+this.product_id+'][number]" value="'+this.number+'"><input type="hidden" name="OrderDetail['+this.product_id+'][price]" value="'+this.price+'">'+
+                	'<input type="hidden" name="OrderDetail['+this.product_id+'][id]" value="'+this.product_id+'"><input type="hidden" name="OrderDetail['+this.product_id+'][num]" value="'+this.number+'"><input type="hidden" name="OrderDetail['+this.product_id+'][price]" value="'+this.price+'">'+
                     '<div class="listright"><span class="addnum"></span><p>'+this.number+'</p><span class="lessnum"></span></div>'+
                     '</li>';
                

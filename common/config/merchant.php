@@ -17,6 +17,9 @@ return [
             'product' => [
                 'class' => 'addons\YunShop\merchant\modules\product\Module',
             ],
+            'order' => [
+                'class' => 'addons\YunShop\merchant\modules\order\Module',
+            ],
         ],
     ],
 

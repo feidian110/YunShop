@@ -77,6 +77,28 @@ class Product extends \common\models\base\BaseModel
         ];
     }
 
+    public function create($data)
+    {
+        $p =  \addons\YunStore\common\models\product\Product::findOne(['id'=>$data['product_id'],'store_id'=>$data['store_id']]);
+
+        $this->product_id = $data['product_id'];
+        $this->product_money = $data['product_money'];
+        $this->buyer_id = $data['buyer_id'];
+        $this->merchant_id = $data['merchant_id'];
+        $this->store_id = $data['store_id'];
+        $this->order_id = $data['order_id'];
+        $this->product_name = $p['name'];
+        $this->num = $data['num'];
+        $this->price = $p['price'];
+        $this->product_picture =$p['picture'];
+        $this->cost_price = $p['cost_price'];
+
+        if($this->save()){
+            return true;
+        }
+
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -40,7 +40,7 @@ class CartItemService extends Service
     }
 
     /**
-     * 获取某件商品在购物差的数量是多少
+     * 获取某件商品在购物车的数量是多少
      * @param $store_id
      * @param $product_id
      * @return mixed
@@ -50,7 +50,7 @@ class CartItemService extends Service
         $product =CartItem::find()->where(['store_id'=>$store_id,'product_id'=>$product_id])
             ->andWhere(['member_id'=>Yii::$app->user->getId(),'status'=>StatusEnum::ENABLED])
             ->one();
-        return $product['number'];
+        return $product['number'] ?? 0;
     }
 
 }

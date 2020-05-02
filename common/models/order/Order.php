@@ -2,6 +2,7 @@
 
 namespace addons\YunShop\common\models\order;
 
+use common\helpers\StringHelper;
 use Yii;
 
 /**
@@ -50,12 +51,22 @@ class Order extends \common\models\base\BaseModel
     public function rules()
     {
         return [
+            [['pick_id','pick_name', 'pick_mobile'], 'required'],
             [['merchant_id', 'store_id', 'buyer_id', 'shipping_type', 'order_from', 'pay_time', 'shippin_status', 'order_status', 'review_status', 'feedback_status', 'pay_status', 'shipping_time', 'sign_time', 'consign_time', 'finish_time', 'sort', 'created_at', 'updated_at'], 'integer'],
             [['product_total_price', 'order_price', 'shipping_price', 'order_pay'], 'number'],
             [['order_sn'], 'string', 'max' => 64],
             [['payment'], 'string', 'max' => 30],
             [['message'], 'string', 'max' => 200],
         ];
+    }
+
+    public function create($data)
+    {
+        $this->order_sn= date('YmdHis') .$data['Order']['merchant_id'].$data['Order']['store_id']. StringHelper::random(10, true);
+        $this->buyer_id = Yii::$app->user->getId();
+        if( $this->load($data) && $this->save() ){
+            return true;
+        }
     }
 
     /**
@@ -90,6 +101,8 @@ class Order extends \common\models\base\BaseModel
             'sort' => 'Sort',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'pick_name' => '提货人姓名',
+            'pick_mobile' => '提货人电话',
         ];
     }
 }
