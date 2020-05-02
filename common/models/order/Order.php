@@ -2,7 +2,10 @@
 
 namespace addons\YunShop\common\models\order;
 
+use addons\YunStore\common\models\Pick;
+use addons\YunStore\common\models\Store;
 use common\helpers\StringHelper;
+use common\models\merchant\Merchant;
 use Yii;
 
 /**
@@ -69,6 +72,21 @@ class Order extends \common\models\base\BaseModel
         }
     }
 
+
+    public function getMerchant()
+    {
+        return $this->hasOne( Merchant::class,['id'=>'merchant_id'] );
+    }
+
+    public function getStore()
+    {
+        return $this->hasOne( Store::class,['id'=>'store_id'] );
+    }
+
+    public function getPick()
+    {
+        return $this->hasOne( Pick::class,['id'=>'pick_id'] );
+    }
     /**
      * {@inheritdoc}
      */
