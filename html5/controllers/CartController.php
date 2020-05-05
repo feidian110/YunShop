@@ -55,6 +55,34 @@ class CartController extends BaseController
 
     }
 
+    public function actionEdit()
+    {
+        if( Yii::$app->request->isPost ){
+            if( Yii::$app->user->isGuest ){
+                return ResultHelper::json('402','还未登录，请登录后在操作！');
+            }
+            $product_id = (int)Yii::$app->request->post('id',0);
+            $store_id = (int)Yii::$app->request->post('store_id',0);
+            $product = Product::findOne(['id'=>$product_id]);
+            if( $product == null ){
+                return ResultHelper::json('404','商品【'.(string)Yii::$app->request->post('name').'】已下架或已停售，请重新选择');
+            }
+            $model = CartItem::findOne(['product_id' => $product_id,'store_id'=>1,'member_id'=>Yii::$app->user->getId()]);
+            if( $num =(int)Yii::$app->request->post('num',0) !== 0){
+                $model->number = (int)Yii::$app->request->post('num');
+                $model->price = $product['price'];
+
+                if( !$model->save(0) ){
+                    return ResultHelper::json('402',$model->getErrors());
+                }
+            } else{
+                $model->delete();
+            }
+
+            return ResultHelper::json('200','删除成功！',CartItem::findAll(['member_id'=>Yii::$app->user->getId(),'store_id'=>$store_id]));
+        }
+    }
+
     public function actionDelete()
     {
         if(Yii::$app->request->isPost){

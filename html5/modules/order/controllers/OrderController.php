@@ -9,6 +9,7 @@ use addons\YunShop\html5\modules\shop\controllers\BaseController;
 use addons\YunStore\common\models\product\Product;
 use addons\YunStore\common\models\Store;
 use common\enums\PayTypeEnum;
+use common\helpers\ResultHelper;
 use Yii;
 
 class OrderController extends BaseController
@@ -76,8 +77,14 @@ class OrderController extends BaseController
 
     public function actionConfirm()
     {
+        if( Yii::$app->user->isGuest){
+            return $this->redirect( '/html5/yun-user/public/login' );
+        }
         if( Yii::$app->request->isPost ){
             $post = Yii::$app->request->post();
+            if( empty($post['OrderDetail']) ){
+                return ResultHelper::json(402,'暂无商品可以结算，请选择商品后再操作！');
+            }
             $store = Store::findOne(['id'=>$post['store_id']]);
             $detail = [];
             foreach ( $post['OrderDetail'] as $item ){
