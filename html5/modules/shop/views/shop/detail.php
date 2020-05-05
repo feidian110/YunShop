@@ -110,9 +110,9 @@ use yii\widgets\ActiveForm;
                         <h2>￥<?=$p['price'];?></h2>
                     </div>
                     <div class="listright">
-                        <span class="addnum"></span>
+                        <span class="lessnum" data-id="<?=$p['product_id'];?>" data-name="<?=$p['product_name'];?>" ></span>
                         <p ><?=$p['number'];?></p>
-                        <span class="lessnum"></span>
+                        <span class="addnum" data-id="<?=$p['product_id'];?>" data-name="<?=$p['product_name'];?>"></span>
                     </div>
                 </li>
                 <?php endforeach;?>
@@ -147,11 +147,11 @@ $js = <<<JS
 		var id = $(this).prev().attr('data-id');
 		var name = $(this).next().attr('data-id');
 		var danjia = $(this).next().text();//获取单价  
-		var subtotal = num * danjia;
-		
 		var data = {'id':id,'name':name,'num':num,'price':danjia,'store_id':$store_id};
-		
-		
+		var a = $("#totalpriceshow").html();//获取当前所选总价  
+		 $("#totalpriceshow").html((a * 1 + danjia * 1).toFixed(2));//计算当前所选总价  
+		 var nm = $("#totalcountshow").html();//获取数量  
+		 $("#totalcountshow").html(nm*1+1);
 		$.post(url,data,function(result){
 		    if( result.code == 402 ){
 		        layer.confirm(result.message, {
@@ -161,16 +161,16 @@ $js = <<<JS
 		            }, function(){
 		            
             });
+		    }else if( result.code == 200 ){
+		        setCartProduct(result.data);
+		        jss();//<span style='font-family: Arial, Helvetica, sans-serif;'></span>   改变按钮样式
+		        return false;
 		    }
-		    var a = $("#totalpriceshow").html();//获取当前所选总价  
-		    $("#totalpriceshow").html((a * 1 + danjia * 1).toFixed(2));//计算当前所选总价  
-		    var nm = $("#totalcountshow").html();//获取数量  
-		    $("#totalcountshow").html(nm*1+1); 
-		    setCartProduct(result.data)
+		    
 		    },"JSON");
 		
 		
-		jss();//<span style='font-family: Arial, Helvetica, sans-serif;'></span>   改变按钮样式
+		
 	});  
 	//减的效果  
 	$(".minus").click(function () {  
@@ -180,18 +180,34 @@ $js = <<<JS
 		$(this).next().text(num);//减1  
 
 		var danjia = $(this).nextAll(".price").text();//获取单价  
+		var url = '/html5/yun-shop/cart/edit';
+		var id = $(this).next().attr('data-id');
+		var name = $(this).next().next().next().attr('data-id');
+		var data = {'id':id,'name':name,'num':num,'price':danjia,'store_id':$store_id};
 		var a = $("#totalpriceshow").html();//获取当前所选总价  
 		$("#totalpriceshow").html((a * 1 - danjia * 1).toFixed(2));//计算当前所选总价  
-		 
 		var nm = $("#totalcountshow").html();//获取数量  
-		$("#totalcountshow").html(nm * 1 - 1);  
+		$("#totalcountshow").html(nm * 1 - 1);
 		//如果数量小于或等于0则隐藏减号和数量  
-		if (num <= 0) {  
-			$(this).next().css("display", "none");  
-			$(this).css("display", "none");  
-			jss();//改变按钮样式  
-			 return  
-		}  
+		if (num <= 0) {
+		    $(this).next().css("display", "none");
+		    $(this).css("display", "none");
+		} 
+		$.post(url,data,function(result){
+		    if( result.code == 402 ){
+		        layer.confirm(result.message, {
+		            btn: ['确定','取消'] 
+		            }, function(){
+		            window.location.href = '/html5/yun-user/public/login'
+		            }, function(){
+		            
+            });
+		    }else if( result.code == 200 ){
+		        setCartProduct(result.data);
+		        jss();//改变按钮样式 
+		    }
+		    },"JSON");
+		
 	});
 	function setCartProduct(data) {
 	    product_html = "";
@@ -200,31 +216,13 @@ $js = <<<JS
                     '<div class="uppic"><img src="'+this.product_img+'"></div>'+
                 	'<div class="listtitle"><h1>'+this.product_name+'</h1><h2>￥'+this.price+'</h2></div>'+
                 	'<input type="hidden" name="OrderDetail['+this.product_id+'][id]" value="'+this.product_id+'"><input type="hidden" name="OrderDetail['+this.product_id+'][num]" value="'+this.number+'"><input type="hidden" name="OrderDetail['+this.product_id+'][price]" value="'+this.price+'">'+
-                    '<div class="listright"><span class="addnum"></span><p>'+this.number+'</p><span class="lessnum"></span></div>'+
+                    '<div class="listright"><span class="lessnum"></span><p>'+this.number+'</p><span class="addnum"></span></div>'+
                     '</li>';
                
             });
 	     $('#cart_product').html(product_html);
 	}
-	function getCartProduct() {
-	    var str=localStorage.getItem('shop_cart_product');
-	    if(!str) return null;
-	    str=JSON.parse(str);
-	    product_html = "";
-	    for (var i in str) {
-	        product_html += '<li><div class="uppic">' +
-            	'<img src="images/p1.jpg"></div><div class="listtitle">'+
-                	'<h1>'+str[i].name+'</h1>'+
-                    '<h2>￥'+str[i].price+'</h2>'+
-                '</div><div class="listright">'+
-                	'<span class="addnum"></span>'+
-                    '<p>'+str[i].num+'</p>'+
-                    '<span class="lessnum"></span></div>'+
-                    '</li>'
-	    }
-	    
-	    $("#cart_product").html(product_html);
-	}
+	
 	function jss() {  
 		var m = $("#totalcountshow").html();  
 		if (m > 0) {  
@@ -288,7 +286,22 @@ $js = <<<JS
 	    })
 	    
 	});
-	
+	//购物车加减
+	$(".lessnum").click(function() {
+	    var n = $(this).next().text();
+	    var num = parseInt(n) - 1; 
+	    var  nm = $('.add').prev().text();
+	    $(this).next().text(num); 
+	    alert(nm)
+	  
+	});
+	$(".addnum").click(function() {
+	    var n = $(this).prev().text();
+	    var num = parseInt(n) + 1;
+	    $(this).prev().text(num);
+	    var a = $(".add").next().next().next().text();
+	    alert(parseInt(a))
+	})
 JS;
 $this->registerJs($js);
 ?>
