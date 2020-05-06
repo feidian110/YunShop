@@ -3,7 +3,11 @@ $this->title = '订单管理';
 $this->params['breadcrumbs'][] = ['label' => '快店管理', 'url' => 'javascript:(0);'];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
 
-use common\enums\StatusEnum;
+use common\enums\PayStatusEnum;
+use addons\YunStore\common\enums\ShippingTypeEnum;
+use addons\YunStore\common\enums\ShippingStatusEnum;
+use common\enums\PayTypeEnum;
+
 use common\helpers\Html;
 use yii\grid\GridView;
 
@@ -32,7 +36,6 @@ use yii\grid\GridView;
 
                         [
                             'attribute' => 'id',
-                            'headerOptions' => ['class' => 'col-md-1'],
                         ],
                         [
                             'header' => "所属门店",
@@ -43,50 +46,82 @@ use yii\grid\GridView;
                             }
                         ],
                         [
+                            'header' => "自提点信息",
                             'attribute' => 'pick.title'
                         ],
                         [
-                            'attribute' => 'product_total_price'
+                            'header' => "会员信息",
+                            'value' => function ($model){
+                                return $model['buyer']['nickname'] ? $model['buyer']['nickname'] : $model['buyer']['username'];
+                            }
+                        ],
+                        [
+                            'header' => "提货人信息",
+                            'attribute' => 'pick_name',
+                            'value' => function($model){
+                                return $model['pick_name'].'：'.$model['pick_mobile'];
+                            }
                         ],
                         [
                             'attribute' => 'order_price'
                         ],
 
                         [
-                            'header' => "门店基本信息",
-                            'format' => 'raw',
-                            'value' => function ( $model ){
-                                return Html::a('点击查看', ['view', 'id' => $model->id], [
-                                    'class' => 'blue',
-                                    'data-toggle' => 'modal',
-                                    'data-target' => '#ajaxModal',
-                                ]) ;
+                            'attribute' => 'payment',
+                            'value' => function ($model){
+                                 return PayTypeEnum::getValue($model['payment']);
+                            }
+                        ],
+                        [
+                            'attribute' => 'shipping_type',
+                            'value' => function ($model){
+                                return ShippingTypeEnum::getValue($model['shipping_type']);
+                            }
+                        ],
+                        [
+                            'header' => '订单状态',
+                        ],
+                        [
+                            'header' => '发货状态',
+                            'attribute' => 'shipping_status',
+                            'value' => function($model) {
+                                return ShippingStatusEnum::getValue($model['shipping_status']);
+                            }
+                        ],
+                        [
+                            'header' => '付款状态',
+                            'attribute' =>'pay_status',
+                            'value' => function($model){
+                                return PayStatusEnum::getValue($model['pay_status']);
                             }
                         ],
                         [
                             'attribute' => 'message',
                         ],
                         [
-                            'header' => '状态',
+                            'header' => '订单售后',
+                            'value' => function( $model ){
 
+                            }
                         ],
-
+                        [
+                            'header' => '下单时间',
+                            'value' => function ($model){
+                                return Yii::$app->formatter->asDatetime($model->created_at);
+                            }
+                        ],
                         [
                             'header' => "操作",
                             'contentOptions' => ['class' => 'text-align-center'],
                             'class' => 'yii\grid\ActionColumn',
-                            'template' => ' {edit}  {destroy}',
+                            'template' => ' {view}',
                             'buttons' => [
-                                'edit' => function ($url, $model, $key) {
-                                    return Html::a('编辑', ['edit', 'id' => $model->id], [
+                                'view' => function ($url, $model, $key) {
+                                    return Html::a('查看', ['view', 'id' => $model->id], [
                                         'class' => 'green'
                                     ]);
                                 },
-                                'destroy' => function ($url, $model, $key) {
-                                    return Html::a('删除', ['destroy', 'id' => $model->id], [
-                                        'class' => 'red',
-                                    ]) ;
-                                },
+
                             ],
                         ],
                     ],

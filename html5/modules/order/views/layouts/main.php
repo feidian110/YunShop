@@ -8,7 +8,7 @@ OrderAsset::register($this);
 <html lang="<?= Yii::$app->language ?>">
 <head>
     <meta charset="UTF-8">
-    <title>确认订单</title>
+    <title><?=$this->title;?></title>
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"/>
     <meta content="yes" name="apple-mobile-web-app-capable"/>
     <meta content="black" name="apple-mobile-web-app-status-bar-style"/>

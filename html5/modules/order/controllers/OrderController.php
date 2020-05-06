@@ -21,6 +21,7 @@ class OrderController extends BaseController
         if( Yii::$app->user->isGuest ){
             return $this->redirect( ['/yun-user/public/login'] );
         }
+
         return $this->render( $this->action->id );
     }
 
@@ -112,6 +113,7 @@ class OrderController extends BaseController
     {
         $order_id = (int)Yii::$app->request->get('order_id',0);
         $model = Order::findOne(['id'=>$order_id,'buyer_id'=>Yii::$app->user->getId()]);
+        $this->layout = "main";
         return $this->render( $this->action->id,[
             'model' =>$model
         ] );

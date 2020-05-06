@@ -42,4 +42,22 @@ class OrderController extends BaseController
         ]);
     }
 
+    public function actionEdit()
+    {
+        return $this->render( $this->action->id );
+    }
+
+    public function actionView()
+    {
+        $id = Yii::$app->request->get('id');
+        $model = $this->findModel($id);
+        return $this->render( $this->action->id,[
+            'model' =>$model
+        ] );
+    }
+
+    public function actionDelivery()
+    {
+        return $this->render( $this->action->id );
+    }
 }

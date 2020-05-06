@@ -35,9 +35,10 @@ class CartItemService extends Service
             ->where(['store_id'=>$store_id])
             ->andWhere(['member_id'=>Yii::$app->user->getId()])
             ->andWhere(['status'=>StatusEnum::ENABLED])
-            ->sum('price');
+            ->sum('sub_total');
         return $sum;
     }
+
 
     /**
      * 获取某件商品在购物车的数量是多少

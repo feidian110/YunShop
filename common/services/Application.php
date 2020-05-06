@@ -8,11 +8,13 @@ use common\components\Service;
  * @package addons\YunShop\common\services
  * @property \addons\YunShop\common\services\shop\ShopService $shop 快店
  * @property \addons\YunShop\common\services\cart\CartItemService  $cartShop 快点购物车
+ * @property \addons\YunShop\common\services\shop\OrderService $orderShop 快店订单
  */
 class Application extends Service
 {
     public $childService = [
         'shop' => 'addons\YunShop\common\services\shop\ShopService',
         'cartShop' => 'addons\YunShop\common\services\cart\CartItemService',
+        'orderShop' => 'addons\YunShop\common\services\shop\OrderService'
     ];
 }

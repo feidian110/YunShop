@@ -4,6 +4,8 @@ use addons\YunStore\common\enums\ShippingTypeEnum;
 use common\helpers\Html;
 use common\helpers\ImageHelper;
 use yii\widgets\ActiveForm;
+
+$this->title = "确认订单";
 ?>
 <?php $form = ActiveForm::begin([
     'action' => '/html5/yun-shop/order/order/create',
@@ -46,7 +48,7 @@ use yii\widgets\ActiveForm;
             </div>
             <div class="aui-flex aui-choice-white">
                 <div class="aui-flex-box">
-                    <h1>商品清单</h1>
+                    <h2>商品清单</h2>
                 </div>
             </div>
             <?php foreach ( $detail as $item ):?>
@@ -99,7 +101,7 @@ use yii\widgets\ActiveForm;
                 应付金额：<em>￥<?= Yii::$app->yunShopService->cartShop->getCartItemTotal($store['id']);?></em>
             </div>
             <div class="aui-btn-button">
-                <button type="submit">去支付</button>
+                <button type="submit">去下单</button>
             </div>
         </div>
     </footer>

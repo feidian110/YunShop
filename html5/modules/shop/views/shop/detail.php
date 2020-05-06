@@ -2,6 +2,7 @@
 use common\helpers\Html;
 use common\helpers\ImageHelper;
 use yii\widgets\ActiveForm;
+$this->title= "店铺首页";
 ?>
     <style>
        .btn{background-color:transparent;position:absolute;right:0px;top:45%;cursor:pointer;padding:20px 20px;height:38px;float: left}
@@ -61,7 +62,7 @@ use yii\widgets\ActiveForm;
                                             <button class="minus" <?php if( Yii::$app->yunShopService->cartShop->findProductCountByCart($store_id,$_item['id']) > 0 ){ echo 'style="display: inline-block;"';}else{}?>>
                                                 <strong></strong>
                                             </button>
-                                            <i data-id="<?=$_item['id'];?>" <?php if( Yii::$app->yunShopService->cartShop->findProductCountByCart($store_id,$_item['id']) > 0 ){ echo 'style="display: inline-block;"';}else{}?>><?= Yii::$app->yunShopService->cartShop->findProductCountByCart($store_id,$_item['id']) ?? 0;?></i>
+                                            <i id="<?=$_item['id'];?>" data-id="<?=$_item['id'];?>" <?php if( Yii::$app->yunShopService->cartShop->findProductCountByCart($store_id,$_item['id']) > 0 ){ echo 'style="display: inline-block;"';}else{}?>><?= Yii::$app->yunShopService->cartShop->findProductCountByCart($store_id,$_item['id']) ?? 0;?></i>
                                             <button class="add">
                                                 <strong></strong>
                                             </button>
@@ -86,6 +87,7 @@ use yii\widgets\ActiveForm;
     <div class="mask"></div>
 
     <?php $form = ActiveForm::begin([
+        'id' => 'form',
     'action' => '/html5/yun-shop/order/order/confirm',
 
 ])?>
@@ -110,9 +112,9 @@ use yii\widgets\ActiveForm;
                         <h2>￥<?=$p['price'];?></h2>
                     </div>
                     <div class="listright">
-                        <span class="lessnum" data-id="<?=$p['product_id'];?>" data-name="<?=$p['product_name'];?>" ></span>
+                        <span  data-id="<?=$p['product_id'];?>" data-name="<?=$p['product_name'];?>" ></span>
                         <p ><?=$p['number'];?></p>
-                        <span class="addnum" data-id="<?=$p['product_id'];?>" data-name="<?=$p['product_name'];?>"></span>
+                        <span  data-id="<?=$p['product_id'];?>" data-name="<?=$p['product_name'];?>"></span>
                     </div>
                 </li>
                 <?php endforeach;?>
@@ -130,7 +132,7 @@ use yii\widgets\ActiveForm;
         <div class="shopprice" >￥<span id="totalpriceshow"><?= Yii::$app->yunShopService->cartShop->getCartItemTotal($store_id) ?? '0.00';?></span>元</div>
     </div>
 
-    <div><button class="shop_submit" type="submit">去结算</button></div>
+    <div style="<?php if(empty($product)){echo 'display: none';}else{};?>" id="pay"><button class="shop_submit" type="submit">去结算</button></div>
 </div>
     <?php ActiveForm::end()?>
 
@@ -163,6 +165,11 @@ $js = <<<JS
             });
 		    }else if( result.code == 200 ){
 		        setCartProduct(result.data);
+		        if( result.data == "" ){
+		            document.getElementById("pay").style.display="none";
+		        }else{
+		            document.getElementById("pay").style.display="";
+		        }
 		        jss();//<span style='font-family: Arial, Helvetica, sans-serif;'></span>   改变按钮样式
 		        return false;
 		    }
@@ -204,6 +211,11 @@ $js = <<<JS
             });
 		    }else if( result.code == 200 ){
 		        setCartProduct(result.data);
+		        if( result.data == "" ){
+		            document.getElementById("pay").style.display="none";
+		        }else{
+		            document.getElementById("pay").style.display="";
+		        }
 		        jss();//改变按钮样式 
 		    }
 		    },"JSON");
@@ -216,7 +228,7 @@ $js = <<<JS
                     '<div class="uppic"><img src="'+this.product_img+'"></div>'+
                 	'<div class="listtitle"><h1>'+this.product_name+'</h1><h2>￥'+this.price+'</h2></div>'+
                 	'<input type="hidden" name="OrderDetail['+this.product_id+'][id]" value="'+this.product_id+'"><input type="hidden" name="OrderDetail['+this.product_id+'][num]" value="'+this.number+'"><input type="hidden" name="OrderDetail['+this.product_id+'][price]" value="'+this.price+'">'+
-                    '<div class="listright"><span class="lessnum"></span><p>'+this.number+'</p><span class="addnum"></span></div>'+
+                    '<div class="listright"><span ></span><p>'+this.number+'</p><span></span></div>'+
                     '</li>';
                
             });
@@ -290,9 +302,8 @@ $js = <<<JS
 	$(".lessnum").click(function() {
 	    var n = $(this).next().text();
 	    var num = parseInt(n) - 1; 
-	    var  nm = $('.add').prev().text();
-	    $(this).next().text(num); 
-	    alert(nm)
+	    var id =$("#+id").text();
+	    alert(id)
 	  
 	});
 	$(".addnum").click(function() {
@@ -301,7 +312,9 @@ $js = <<<JS
 	    $(this).prev().text(num);
 	    var a = $(".add").next().next().next().text();
 	    alert(parseInt(a))
-	})
+	});
+	
+	
 JS;
 $this->registerJs($js);
 ?>

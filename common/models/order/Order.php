@@ -5,6 +5,7 @@ namespace addons\YunShop\common\models\order;
 use addons\YunStore\common\models\Pick;
 use addons\YunStore\common\models\Store;
 use common\helpers\StringHelper;
+use common\models\member\Member;
 use common\models\merchant\Merchant;
 use Yii;
 
@@ -25,7 +26,7 @@ use Yii;
  * @property string $shipping_price 运费
  * @property string $order_pay 订单实付金额
  * @property int $pay_time 支付时间
- * @property int $shippin_status 订单状态
+ * @property int $shipping_status 订单状态
  * @property int $order_status 订单状态
  * @property int $review_status 评价状态
  * @property int $feedback_status 维权状态
@@ -55,7 +56,7 @@ class Order extends \common\models\base\BaseModel
     {
         return [
             [['pick_id','pick_name', 'pick_mobile'], 'required'],
-            [['merchant_id', 'store_id', 'buyer_id', 'shipping_type', 'order_from', 'pay_time', 'shippin_status', 'order_status', 'review_status', 'feedback_status', 'pay_status', 'shipping_time', 'sign_time', 'consign_time', 'finish_time', 'sort', 'created_at', 'updated_at'], 'integer'],
+            [['merchant_id', 'store_id', 'buyer_id', 'shipping_type', 'order_from', 'pay_time', 'shipping_status', 'order_status', 'review_status', 'feedback_status', 'pay_status', 'shipping_time', 'sign_time', 'consign_time', 'finish_time', 'sort', 'created_at', 'updated_at'], 'integer'],
             [['product_total_price', 'order_price', 'shipping_price', 'order_pay'], 'number'],
             [['order_sn'], 'string', 'max' => 64],
             [['payment'], 'string', 'max' => 30],
@@ -87,6 +88,21 @@ class Order extends \common\models\base\BaseModel
     {
         return $this->hasOne( Pick::class,['id'=>'pick_id'] );
     }
+
+    public function getProfile()
+    {
+        return $this->hasMany( Product::class,['order_id'=>'id'] );
+    }
+
+    public function getBuyer()
+    {
+        return $this->hasOne( Member::class,['id'=>'buyer_id'] );
+    }
+
+    public function getConsignee()
+    {
+        return $this->hasOne( Buyer::class,['order_id'=> 'id'] );
+    }
     /**
      * {@inheritdoc}
      */
@@ -94,28 +110,28 @@ class Order extends \common\models\base\BaseModel
     {
         return [
             'id' => 'ID',
-            'order_sn' => 'Order Sn',
+            'order_sn' => '订单编号',
             'merchant_id' => 'Merchant ID',
             'store_id' => 'Store ID',
             'buyer_id' => 'Buyer ID',
-            'payment' => 'Payment',
-            'shipping_type' => 'Shipping Type',
-            'order_from' => 'Order From',
-            'message' => 'Message',
-            'product_total_price' => 'Product Total Price',
-            'order_price' => 'Order Price',
-            'shipping_price' => 'Shipping Price',
+            'payment' => '实付方式',
+            'shipping_type' => '配送方式',
+            'order_from' => '订单来源',
+            'message' => '买家留言',
+            'product_total_price' => '商品合计',
+            'order_price' => '订单金额',
+            'shipping_price' => '配送费用',
             'order_pay' => 'Order Pay',
-            'pay_time' => 'Pay Time',
-            'shippin_status' => 'Shippin Status',
-            'order_status' => 'Order Status',
+            'pay_time' => '支付时间',
+            'shipping_status' => '配送状态',
+            'order_status' => '订单状态',
             'review_status' => 'Review Status',
             'feedback_status' => 'Feedback Status',
-            'pay_status' => 'Pay Status',
-            'shipping_time' => 'Shipping Time',
-            'sign_time' => 'Sign Time',
+            'pay_status' => '支付状态',
+            'shipping_time' => '配送时间',
+            'sign_time' => '签收时间',
             'consign_time' => 'Consign Time',
-            'finish_time' => 'Finish Time',
+            'finish_time' => '完成时间',
             'sort' => 'Sort',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
