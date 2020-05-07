@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
         <div class="aui-order-box">
             <div class="aui-flex aui-choice-white b-line">
                 <div class="aui-flex-box">配送方式</div>
-                <div class="aui-flex-triangle"><?= ShippingTypeEnum::getValue($store['shop']['delivery_method']);?></div>
+                <div class=""><?= ShippingTypeEnum::getValue($store['shop']['delivery_method']);?></div>
                 <?= $form->field($model,'merchant_id')->hiddenInput(['value'=>$store['merchant_id']])->label(false);?>
                 <?= $form->field($model,'store_id')->hiddenInput(['value'=>$store['id']])->label(false);?>
             </div>

@@ -28,11 +28,12 @@ class CartController extends BaseController
             }
             $product_id = (int)Yii::$app->request->post('id',0);
             $store_id = (int)Yii::$app->request->post('store_id',0);
+
             $product = Product::findOne(['id'=>$product_id]);
             if( $product == null ){
                 return ResultHelper::json('404','商品【'.(string)Yii::$app->request->post('name').'】已下架或已停售，请重新选择');
             }
-            $model = CartItem::findOne(['product_id' => $product_id,'store_id'=>1,'member_id'=>Yii::$app->user->getId()]);
+            $model = CartItem::findOne(['product_id' => $product_id,'store_id'=>$store_id,'member_id'=>Yii::$app->user->getId()]);
             if( $model == null ){
                 $model = new CartItem();
                 $model->product_id = $product_id;

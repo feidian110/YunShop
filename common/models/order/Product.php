@@ -152,4 +152,9 @@ class Product extends \common\models\base\BaseModel
             'updated_at' => 'Updated At',
         ];
     }
+
+    public function getOrder()
+    {
+        return $this->hasOne( Order::class,['id'=>'order_id'] );
+    }
 }

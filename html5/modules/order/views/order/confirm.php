@@ -8,8 +8,9 @@ use yii\widgets\ActiveForm;
 $this->title = "确认订单";
 ?>
 <?php $form = ActiveForm::begin([
+
     'action' => '/html5/yun-shop/order/order/create',
-])?>
+    ])?>
 <section class="aui-flexView">
     <header class="aui-navBar aui-navBar-fixed">
         <a href="javascript:history.go(-1)" class="aui-navBar-item">
@@ -26,7 +27,7 @@ $this->title = "确认订单";
         <div class="aui-order-box">
             <div class="aui-flex aui-choice-white b-line">
                 <div class="aui-flex-box">配送方式</div>
-                <div class="aui-flex-triangle"><?= ShippingTypeEnum::getValue($store['shop']['delivery_method']);?></div>
+                <div class=""><?= ShippingTypeEnum::getValue($store['shop']['delivery_method']);?></div>
                 <?= $form->field($model,'merchant_id')->hiddenInput(['value'=>$store['merchant_id']])->label(false);?>
                 <?= $form->field($model,'store_id')->hiddenInput(['value'=>$store['id']])->label(false);?>
             </div>
@@ -72,25 +73,17 @@ $this->title = "确认订单";
             <div class="aui-flex aui-choice-white b-line">
                 <div class="aui-flex-box">支付方式</div>
                 <?= $form->field($model,'payment')->hiddenInput(['value'=>PayTypeEnum::OFFLINE])->label(false)?>
-                <div class="aui-flex-triangle">线下支付</div>
+                <div class="">线下支付</div>
 
             </div>
-            <div class="aui-flex aui-choice-white b-line">
-                <div class="aui-flex-box">优惠券</div>
-                <div class="aui-flex-triangle">无可用</div>
-            </div>
-            <div class="aui-flex aui-choice-white  aui-mar15">
-                <div class="aui-flex-box">发票信息</div>
-                <div class="aui-flex-triangle">不可开发票</div>
-            </div>
+
             <div class="aui-flex aui-choice-white ">
                 <div class="aui-flex-box">
-                    <h2>商品总价</h2>
-                    <h3>运费总额</h3>
+                    <h2>总份数</h2>
+
                 </div>
                 <div class="aui-flex-triangle aui-flex-triangle-clear">
-                    <h4>￥<?= Yii::$app->yunShopService->cartShop->getCartItemTotal($store['id']);?></h4>
-                    <p>+￥0元</p>
+                    <h4><?= Yii::$app->yunShopService->cartShop->getCartItemTotal($store['id']);?></h4>
                 </div>
             </div>
         </div>
@@ -98,7 +91,7 @@ $this->title = "确认订单";
     <footer class="aui-bar-footer">
         <div class="aui-flex">
             <div class="aui-flex-box">
-                应付金额：<em>￥<?= Yii::$app->yunShopService->cartShop->getCartItemTotal($store['id']);?></em>
+
             </div>
             <div class="aui-btn-button">
                 <button type="submit">去下单</button>

@@ -1,13 +1,11 @@
 <?php
-$this->title = '订单管理';
+$this->title = '发货管理';
 $this->params['breadcrumbs'][] = ['label' => '快店管理', 'url' => 'javascript:(0);'];
+$this->params['breadcrumbs'][] = ['label' => '订单管理'];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
 
-use common\enums\PayStatusEnum;
-use addons\YunStore\common\enums\ShippingTypeEnum;
-use addons\YunStore\common\enums\ShippingStatusEnum;
-use common\enums\PayTypeEnum;
 
+use addons\YunStore\common\enums\ShippingStatusEnum;
 use common\helpers\Html;
 use yii\grid\GridView;
 
@@ -19,8 +17,8 @@ use yii\grid\GridView;
             <div class="box-header">
                 <h3 class="box-title"><?= $this->title; ?></h3>
                 <div class="box-tools">
-                    <?= Html::create(['edit'], '添加订单') ?>
-                    <?= Html::a('<i class="fa fa-fw fa-download"></i> 批量导出','javascript:(0);',['class'=> 'btn btn-primary btn-sm export']);?>
+                    <?= Html::a('<i></i>订单数据','javascript:0;',['class'=> 'btn btn-primary btn-sm product']);?>
+                    <?= Html::a('<i class="fa fa-fw fa-download"></i> 批量发货','javascript:(0);',['class'=> 'btn btn-primary btn-sm delivery']);?>
                 </div>
             </div>
             <div class="box-body table-responsive">
@@ -72,35 +70,10 @@ use yii\grid\GridView;
                                 return $model['pick_name'].'：'.$model['pick_mobile'];
                             }
                         ],
-                        [
-                            'attribute' => 'order_price',
-                            'filter' => false, //不显示搜索框
-                        ],
 
-                        [
-                            'attribute' => 'payment',
-                            'filter' => Html::activeDropDownList($searchModel, 'payment', PayTypeEnum::getMap(), [
-                                    'prompt' => '全部',
-                                    'class' => 'form-control'
-                                ]
-                            ),
-                            'format' => 'raw',
-                            'value' => function ($model){
-                                 return PayTypeEnum::getValue($model['payment']);
-                            }
-                        ],
-                        [
-                            'attribute' => 'shipping_type',
-                            'filter' => Html::activeDropDownList($searchModel, 'shipping_type', ShippingTypeEnum::getMap(), [
-                                    'prompt' => '全部',
-                                    'class' => 'form-control'
-                                ]
-                            ),
-                            'format' => 'raw',
-                            'value' => function ($model){
-                                return ShippingTypeEnum::getValue($model['shipping_type']);
-                            }
-                        ],
+
+
+
                         [
                             'header' => '订单状态',
                         ],
@@ -117,29 +90,12 @@ use yii\grid\GridView;
                                 return ShippingStatusEnum::getValue($model['shipping_status']);
                             }
                         ],
-                        [
-                            'header' => '付款状态',
-                            'attribute' =>'pay_status',
-                            'filter' => Html::activeDropDownList($searchModel, 'pay_status', PayStatusEnum::getMap(), [
-                                    'prompt' => '全部',
-                                    'class' => 'form-control'
-                                ]
-                            ),
-                            'format' => 'raw',
-                            'value' => function($model){
-                                return PayStatusEnum::getValue($model['pay_status']);
-                            }
-                        ],
+
                         [
                             'attribute' => 'message',
                             'filter' => false, //不显示搜索框
                         ],
-                        [
-                            'header' => '订单售后',
-                            'value' => function( $model ){
 
-                            }
-                        ],
                         [
                             'header' => '下单时间',
                             'value' => function ($model){
@@ -169,13 +125,16 @@ use yii\grid\GridView;
 
 <?php
 $js = <<<JS
-    $(".export").click(function (){
-    var keys = $("#order").yiiGridView("getSelectedRows");
-    var url = 'export'+'?ids='+keys;
-    window.location.href = url;
-    
-    
-});
+    $(".product").click(function (){
+        var keys = $("#order").yiiGridView("getSelectedRows");
+        var url = 'product'+'?ids='+keys;
+        window.location.href = url;
+    });
+    $(".delivery").click(function (){
+        var keys = $("#order").yiiGridView("getSelectedRows");
+        var url = 'batch'+'?ids='+keys;
+        window.location.href = url;
+    });
 JS;
 $this->registerJs($js);
 ?>

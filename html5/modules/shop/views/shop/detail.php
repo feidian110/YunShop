@@ -113,7 +113,7 @@ $this->title= "店铺首页";
                     </div>
                     <div class="listright">
                         <span  data-id="<?=$p['product_id'];?>" data-name="<?=$p['product_name'];?>" ></span>
-                        <p ><?=$p['number'];?></p>
+                        <p >x<?=$p['number'];?></p>
                         <span  data-id="<?=$p['product_id'];?>" data-name="<?=$p['product_name'];?>"></span>
                     </div>
                 </li>
@@ -129,7 +129,7 @@ $this->title= "店铺首页";
             <i></i>
             <div class="numspan"><span id="totalcountshow"><?= Yii::$app->yunShopService->cartShop->getCartItemCount($store_id) ?? 0;?></span></div>
         </div>
-        <div class="shopprice" >￥<span id="totalpriceshow"><?= Yii::$app->yunShopService->cartShop->getCartItemTotal($store_id) ?? '0.00';?></span>元</div>
+
     </div>
 
     <div style="<?php if(empty($product)){echo 'display: none';}else{};?>" id="pay"><button class="shop_submit" type="submit">去结算</button></div>
@@ -159,7 +159,8 @@ $js = <<<JS
 		        layer.confirm(result.message, {
 		            btn: ['确定','取消'] 
 		            }, function(){
-		            window.location.href = '/html5/yun-user/public/login'
+		            window.location.href = '/html5/yun-user/public/login';
+		            return false;
 		            }, function(){
 		            
             });
@@ -205,7 +206,8 @@ $js = <<<JS
 		        layer.confirm(result.message, {
 		            btn: ['确定','取消'] 
 		            }, function(){
-		            window.location.href = '/html5/yun-user/public/login'
+		            window.location.href = '/html5/yun-user/public/login';
+		            return false;
 		            }, function(){
 		            
             });
@@ -228,7 +230,7 @@ $js = <<<JS
                     '<div class="uppic"><img src="'+this.product_img+'"></div>'+
                 	'<div class="listtitle"><h1>'+this.product_name+'</h1><h2>￥'+this.price+'</h2></div>'+
                 	'<input type="hidden" name="OrderDetail['+this.product_id+'][id]" value="'+this.product_id+'"><input type="hidden" name="OrderDetail['+this.product_id+'][num]" value="'+this.number+'"><input type="hidden" name="OrderDetail['+this.product_id+'][price]" value="'+this.price+'">'+
-                    '<div class="listright"><span ></span><p>'+this.number+'</p><span></span></div>'+
+                    '<div class="listright"><span ></span><p>x'+this.number+'</p><span></span></div>'+
                     '</li>';
                
             });
