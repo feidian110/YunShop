@@ -3,6 +3,7 @@ $this->title = '订单管理';
 $this->params['breadcrumbs'][] = ['label' => '快店管理', 'url' => 'javascript:(0);'];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
 
+use addons\YunStore\common\enums\OrderStatusEnum;
 use common\enums\PayStatusEnum;
 use addons\YunStore\common\enums\ShippingTypeEnum;
 use addons\YunStore\common\enums\ShippingStatusEnum;
@@ -19,7 +20,7 @@ use yii\grid\GridView;
             <div class="box-header">
                 <h3 class="box-title"><?= $this->title; ?></h3>
                 <div class="box-tools">
-                    <?= Html::create(['edit'], '添加订单') ?>
+                    <?= Html::create(['edit'], '添加订单',['class'=> 'btn btn-success btn-sm']) ?>
                     <?= Html::a('<i class="fa fa-fw fa-download"></i> 批量导出','javascript:(0);',['class'=> 'btn btn-primary btn-sm export']);?>
                 </div>
             </div>
@@ -103,6 +104,16 @@ use yii\grid\GridView;
                         ],
                         [
                             'header' => '订单状态',
+                            'attribute' => 'order_status',
+                            'filter' => Html::activeDropDownList($searchModel, 'order_status', OrderStatusEnum::getMap(), [
+                                    'prompt' => '全部',
+                                    'class' => 'form-control'
+                                ]
+                            ),
+                            'format' => 'raw',
+                            'value' => function($model) {
+                                return OrderStatusEnum::getValue($model['order_status']);
+                            }
                         ],
                         [
                             'header' => '发货状态',

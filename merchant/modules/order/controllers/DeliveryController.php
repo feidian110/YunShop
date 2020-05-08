@@ -59,7 +59,7 @@ class DeliveryController extends BaseController
         $product = Product::find()->select('order_id,product_id,product_name,num')
             ->where(['or',['order_id'=>$ids]])
             ->asArray()->all();
-        $header = $list = [];
+        $a = $header = $list = [];
         foreach ( $product as $item ){
             $a[$item['product_id']] = $item['product_name'];
         }
@@ -81,10 +81,9 @@ class DeliveryController extends BaseController
                 $list[$d]['pick_title'] = $pp['order']['pick']['title'];
                 $list[$d]['pick_name'] = $pp['order']['pick_name'];
                 $list[$d]['pick_mobile'] = $pp['order']['pick_mobile'];
-                $list[$d][$v] =  Product::find()->where(['order_id'=>$d])->andWhere(['product_id'=>$k])->sum('num');
+                $list[$d][$v] =  Product::find()->where(['order_id'=>$d])->andWhere(['product_id'=>$k])->sum('num') ? Product::find()->where(['order_id'=>$d])->andWhere(['product_id'=>$k])->sum('num') : 0;
             }
         }
-        //var_dump($header,$list);die;
         $title = '商品汇总_'.date('YmdHis');
         return ExcelHelper::exportData($list, $header, $title, 'xlsx');
 

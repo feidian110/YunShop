@@ -4,7 +4,7 @@ $this->params['breadcrumbs'][] = ['label' => '快店管理', 'url' => 'javascrip
 $this->params['breadcrumbs'][] = ['label' => '订单管理'];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
 
-
+use addons\YunStore\common\enums\OrderStatusEnum;
 use addons\YunStore\common\enums\ShippingStatusEnum;
 use common\helpers\Html;
 use yii\grid\GridView;
@@ -71,11 +71,18 @@ use yii\grid\GridView;
                             }
                         ],
 
-
-
-
                         [
                             'header' => '订单状态',
+                            'attribute' => 'order_status',
+                            'filter' => Html::activeDropDownList($searchModel, 'order_status', OrderStatusEnum::getMap(), [
+                                    'prompt' => '全部',
+                                    'class' => 'form-control'
+                                ]
+                            ),
+                            'format' => 'raw',
+                            'value' => function($model) {
+                                return OrderStatusEnum::getValue($model['order_status']);
+                            }
                         ],
                         [
                             'header' => '发货状态',
@@ -106,14 +113,18 @@ use yii\grid\GridView;
                             'header' => "操作",
                             'contentOptions' => ['class' => 'text-align-center'],
                             'class' => 'yii\grid\ActionColumn',
-                            'template' => ' {view}',
+                            'template' => ' {view} '.'|'.' {ration}',
                             'buttons' => [
                                 'view' => function ($url, $model, $key) {
                                     return Html::a('查看', ['view', 'id' => $model->id], [
                                         'class' => 'green'
                                     ]);
                                 },
-
+                                'ration' => function ($url, $model, $key) {
+                                    return Html::a('配货', ['ration', 'id' => $model->id], [
+                                        'class' => 'blue'
+                                    ]);
+                                },
                             ],
                         ],
                     ],
