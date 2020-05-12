@@ -35,12 +35,15 @@ class CategoryController extends BaseController
         $id = $request->get('id');
         $model = $this->findModel($id);
         $model->pid = $request->get('pid', null) ?? $model->pid; // 父id
-
-        $this->activeFormValidate($model);
-        if ($model->load(Yii::$app->request->post())) {
-            return $model->save()
-                ? $this->redirect(['index'])
-                : $this->message($this->getError($model), $this->redirect(['index']), 'error');
+        if( Yii::$app->request->isPost ){
+            $this->activeFormValidate($model);
+            $data = Yii::$app->request->post();
+            $model->week_display = $data['ProductCate']['week_display'] ? implode(',',$data['ProductCate']['week_display']) : "";
+            if ($model->load($data)) {
+                return $model->save()
+                    ? $this->redirect(['index'])
+                    : $this->message($this->getError($model), $this->redirect(['index']), 'error');
+            }
         }
 
         return $this->renderAjax($this->action->id, [

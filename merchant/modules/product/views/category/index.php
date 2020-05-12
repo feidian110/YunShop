@@ -1,5 +1,6 @@
 <?php
 
+use addons\YunStore\common\enums\WeekEnum;
 use common\helpers\Html;
 use jianyan\treegrid\TreeGrid;
 
@@ -70,7 +71,14 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                             },
                         ],
                         [
-                            'attribute' => 'week_display'
+                            'attribute' => 'week_display',
+                            'value' => function ($model) {
+                                $week = [];
+                                foreach ( explode(',',$model['week_display']) as $k=>$v ){
+                                    $week[] = WeekEnum::getValue($v);
+                                }
+                                return implode('，',$week);
+                            },
                         ],
                         [
                             'attribute' => 'sort',

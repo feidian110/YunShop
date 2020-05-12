@@ -9,6 +9,7 @@ use common\enums\StatusEnum;
 use common\enums\WhetherEnum;
 use common\helpers\ResultHelper;
 use Yii;
+use yii\db\Expression;
 
 class ShopController extends BaseController
 {
@@ -30,10 +31,15 @@ class ShopController extends BaseController
         $open_time_three = strtotime($model['store']['hours']['open_time_three']);
         $close_time_three = strtotime($model['store']['hours']['close_time_three']);
         $now_time = time();
+        $time=date("w",$now_time);
+        $where = new Expression("FIND_IN_SET(:field, week_display)",[":field"=>$time]);
         $cate = ProductCate::find()
             ->where( ['merchant_id'=>$model['merchant_id'],'store_id'=>$model['store_id']] )
+            ->andWhere($where)
             ->andWhere(['=','status',AuditStateEnum::ENABLED])
             ->all();
+
+
         $product = CartItem::findAll(['store_id'=>$id,'member_id'=>Yii::$app->user->getId(),'status'=>StatusEnum::ENABLED]);
         if( $open_time_one = $close_time_one == strtotime("00:00:00") ){
 
@@ -56,6 +62,7 @@ class ShopController extends BaseController
 
         return $this->render( 'tips',[
             'type' => 'close',
+            'store_id' => $id,
             'message' => '本店已打烊，休息中...！'
         ] );
 

@@ -1,5 +1,5 @@
 <?php
-use common\helpers\Html;
+use common\helpers\Url;
 use common\helpers\ImageHelper;
 use yii\widgets\ActiveForm;
 $this->title= "店铺首页";
@@ -49,11 +49,13 @@ $this->title= "店铺首页";
                         <li>
                             <div class="class-title"><?=$item['title'];?></div>
                             <?php foreach ( $item['product'] as $_item ):?>
-                            <div>
+
                                 <div class="menu-txt item">
+                                    <a href="<?= Url::to(['product/view','id'=>$_item['id']]);?>">
                                     <div class="item-left">
                                         <div class="item-img" style="width: 75px"><img src="<?= ImageHelper::default($_item['picture']);?>" style="position: relative; height: 75px;width: 75px"></div>
                                     </div>
+                                    </a>
                                     <div class="item-right">
                                         <div class="title"><?= $_item['name'];?></div>
                                         <p class="list2">
@@ -71,9 +73,8 @@ $this->title= "店铺首页";
                                         </div>
                                         </p>
                                     </div>
-
                                 </div>
-                            </div>
+
                             <?php endforeach;?>
                         </li>
                         <?php endforeach;?>
